@@ -1,0 +1,12 @@
+micronaut:
+  server:
+    host: 0.0.0.0
+    port: 8080
+  application:
+    name: wsgateway
+  router:
+    static-resources:
+      default:
+        enabled: true
+        mapping: /**
+        paths: classpath:public
