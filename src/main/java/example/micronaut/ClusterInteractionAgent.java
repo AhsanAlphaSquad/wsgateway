@@ -34,8 +34,6 @@ public class ClusterInteractionAgent implements Agent {
     private MediaDriver mediaDriver;
     private static final int MAX_MESSAGE_SIZE = 1024;
     private UnsafeBuffer sendBuffer = new UnsafeBuffer(ByteBuffer.allocateDirect(MAX_MESSAGE_SIZE));
-    private final SimpleMessageEncoder encoder = new SimpleMessageEncoder()
-        .wrapAndApplyHeader(sendBuffer, 0, new MessageHeaderEncoder());
 
 
     private static final int PORT_BASE = 9000;
@@ -101,9 +99,8 @@ public class ClusterInteractionAgent implements Agent {
     }
 
     public void send(String sessionId, String message) {
-        if ((sessionId.length() + message.length() + Integer.BYTES * 2) > MAX_MESSAGE_SIZE) {
-            return;
-        }
+        final SimpleMessageEncoder encoder = new SimpleMessageEncoder()
+            .wrapAndApplyHeader(sendBuffer, 0, new MessageHeaderEncoder());
 
         encoder.sessionId(sessionId);
         encoder.message(message);

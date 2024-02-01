@@ -36,25 +36,29 @@ public class WSGateway implements OnMessageReceived {
     @OnMessage
     public void onMessage(WebSocketSession session, String message) {
         // is this checking needed?
-        if(!sessions.containsKey(session.getId()))
-        {
-            sessions.put(session.getId(), session);
-        }
-
-        ClusterInteractionAgent.getInstance().send(session.getId(), message);
+        String sessionId = session.getId();
+        sessions.computeIfAbsent(sessionId, k -> session);
+        LOGGER.info("Sent SessionId: {}, Message: {}", sessionId, message);
+        ClusterInteractionAgent.getInstance().send(sessionId, message);
     }
 
     @OnClose
     public void onClose(WebSocketSession session) {
         LOGGER.info("Client disconnected");
+        sessions.remove(session.getId());
     }
 
     @Override
     public void received(String sessionId, String message) {
         // is this checking needed?
-        if(sessions.containsKey(sessionId)) 
+        LOGGER.info("Received SessionId: {}, Message: {}", sessionId, message);
+        if(sessions.containsKey(sessionId))
         {
-            sessions.get(sessionId).sendAsync(message);
+            WebSocketSession session = sessions.get(sessionId);
+            if(session.isOpen())
+            {
+                session.sendAsync(message);
+            }
         }
         else
         {
