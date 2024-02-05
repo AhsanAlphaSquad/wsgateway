@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.List;
 import org.agrona.concurrent.Agent;
+import org.agrona.concurrent.SleepingIdleStrategy;
 import org.agrona.concurrent.SystemEpochClock;
 import org.agrona.concurrent.UnsafeBuffer;
 import org.slf4j.Logger;
@@ -13,6 +14,8 @@ import com.aeroncookbook.sbe.MessageHeaderEncoder;
 import com.aeroncookbook.sbe.SimpleMessageEncoder;
 
 import example.micronaut.Application.OnMessageReceived;
+import example.micronaut.WSGateway.GatewayStatistics;
+import io.aeron.Publication;
 import io.aeron.cluster.client.AeronCluster;
 import io.aeron.driver.MediaDriver;
 import io.aeron.driver.ThreadingMode;
@@ -32,7 +35,7 @@ public class ClusterInteractionAgent implements Agent {
     private long lastHeartbeatTime = Long.MIN_VALUE;
     private AeronCluster aeronCluster;
     private MediaDriver mediaDriver;
-    private static final int MAX_MESSAGE_SIZE = 1024;
+    private static final int MAX_MESSAGE_SIZE = 1024 * 1024 * 64;
     private UnsafeBuffer sendBuffer = new UnsafeBuffer(ByteBuffer.allocateDirect(MAX_MESSAGE_SIZE));
 
 
@@ -105,6 +108,37 @@ public class ClusterInteractionAgent implements Agent {
         encoder.sessionId(sessionId);
         encoder.message(message);
 
-        aeronCluster.offer(sendBuffer, 0, MessageHeaderEncoder.ENCODED_LENGTH + encoder.encodedLength());
+        // TODO: this should not be here
+        SleepingIdleStrategy idleStrategy = new SleepingIdleStrategy();
+
+        int RETRY_COUNT = 3;
+        int retries = 0;
+        do
+        {
+            final long result = aeronCluster.offer(sendBuffer, 0, MessageHeaderEncoder.ENCODED_LENGTH + encoder.encodedLength());
+            if (result > 0L)
+            {
+                GatewayStatistics.messagesSent++;
+                LOGGER.info("Statistics: sent {}, received {}", GatewayStatistics.messagesSent, GatewayStatistics.messagesReceived);    
+                return;
+            }
+            else if (result == Publication.BACK_PRESSURED)
+            {
+                LOGGER.warn("backpressure on session offer");
+            }
+            else if (result == Publication.ADMIN_ACTION)
+            {
+                LOGGER.warn("admin action on session offer");
+            }
+            else if (result == Publication.NOT_CONNECTED || result == Publication.MAX_POSITION_EXCEEDED)
+            {
+                LOGGER.error("unexpected state on session offer: {}", result);
+                return;
+            }
+
+            idleStrategy.idle();
+            retries += 1;
+        }
+        while (retries < RETRY_COUNT);
     }
 }

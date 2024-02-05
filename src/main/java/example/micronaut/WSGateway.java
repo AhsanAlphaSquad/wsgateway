@@ -13,6 +13,13 @@ import io.micronaut.websocket.annotation.ServerWebSocket;
 
 @ServerWebSocket("/ws")
 public class WSGateway {
+
+    public class GatewayStatistics
+    {
+        public static int messagesSent = 0;
+        public static int messagesReceived = 0;
+    }
+
     private static final Logger LOGGER = LoggerFactory.getLogger(WSGateway.class);
     private static WSGateway instance = null;
 
@@ -36,6 +43,7 @@ public class WSGateway {
     public void onMessage(WebSocketSession session, String message) {
         // is this checking needed?
         String sessionId = session.getId();
+        GatewayStatistics.messagesReceived++;
         sessions.computeIfAbsent(sessionId, k -> session);
 //        LOGGER.info("Sent SessionId: {}, Message: {}", sessionId, message);
         ClusterInteractionAgent.getInstance().send(sessionId, message);
