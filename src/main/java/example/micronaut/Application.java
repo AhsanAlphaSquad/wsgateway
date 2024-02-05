@@ -8,6 +8,10 @@ import io.micronaut.runtime.Micronaut;
 
 public class Application {
 
+    @FunctionalInterface
+    public interface OnMessageReceived {
+        void received(String sessionId, String message);        
+    }
 
     public static void main(String[] args) {
 

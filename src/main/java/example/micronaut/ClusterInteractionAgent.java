@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import com.aeroncookbook.sbe.MessageHeaderEncoder;
 import com.aeroncookbook.sbe.SimpleMessageEncoder;
 
-import example.micronaut.AeronClusterClient.OnMessageReceived;
+import example.micronaut.Application.OnMessageReceived;
 import io.aeron.cluster.client.AeronCluster;
 import io.aeron.driver.MediaDriver;
 import io.aeron.driver.ThreadingMode;

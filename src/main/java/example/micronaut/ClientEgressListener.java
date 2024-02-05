@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import com.aeroncookbook.sbe.MessageHeaderDecoder;
 import com.aeroncookbook.sbe.SimpleMessageDecoder;
 
-import example.micronaut.AeronClusterClient.OnMessageReceived;
+import example.micronaut.Application.OnMessageReceived;
 import io.aeron.cluster.client.EgressListener;
 import io.aeron.logbuffer.Header;
 

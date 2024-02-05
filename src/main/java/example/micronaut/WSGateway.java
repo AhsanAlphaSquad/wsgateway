@@ -5,7 +5,6 @@ import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import example.micronaut.AeronClusterClient.OnMessageReceived;
 import io.micronaut.websocket.WebSocketSession;
 import io.micronaut.websocket.annotation.OnClose;
 import io.micronaut.websocket.annotation.OnMessage;
@@ -13,7 +12,7 @@ import io.micronaut.websocket.annotation.OnOpen;
 import io.micronaut.websocket.annotation.ServerWebSocket;
 
 @ServerWebSocket("/ws")
-public class WSGateway implements OnMessageReceived {
+public class WSGateway {
     private static final Logger LOGGER = LoggerFactory.getLogger(WSGateway.class);
     private static WSGateway instance = null;
 
@@ -48,7 +47,6 @@ public class WSGateway implements OnMessageReceived {
         sessions.remove(session.getId());
     }
 
-    @Override
     public void received(String sessionId, String message) {
         // is this checking needed?
 //        LOGGER.info("Received SessionId: {}, Message: {}", sessionId, message);

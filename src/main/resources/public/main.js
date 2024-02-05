@@ -1,6 +1,5 @@
 
 const ws = new WebSocket("ws://" + location.hostname + ":" + location.port + "/ws");
-// get most precise time now
 
 let time_start = 0;
 
