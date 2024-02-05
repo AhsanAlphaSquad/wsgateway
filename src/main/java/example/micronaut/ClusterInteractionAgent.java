@@ -105,6 +105,6 @@ public class ClusterInteractionAgent implements Agent {
         encoder.sessionId(sessionId);
         encoder.message(message);
 
-        aeronCluster.offer(sendBuffer, 0, encoder.encodedLength());
+        aeronCluster.offer(sendBuffer, 0, MessageHeaderEncoder.ENCODED_LENGTH + encoder.encodedLength());
     }
 }
