@@ -7,10 +7,21 @@
 </head>
 <body>
     
-    
+    <div>
+        <h1>Stats</h1>
+        <p>Messages Sent: <span id="send_count"></span></p>
+        <p>Messages Received: <span id="received_count"></span></p>
+        <p>Messages Lost: <span id="lost_count"></span></p>
+        <p>Time: <span id="time"></span></p>
+    </div>
+
+    <p>Messages to send</p>
+    <input type="number" id="count">
+
+    <p>String</p>
     <input type="text" name="string" id="string" onkeydown="if (event.keyCode == 13) reverse()">
     <button onclick="reverse()">Reverse</button>
-
+    <button onclick="clear_result()">Clear</button>
     <ol id="result">
     </ol>
 

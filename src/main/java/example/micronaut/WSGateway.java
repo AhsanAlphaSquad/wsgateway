@@ -38,7 +38,7 @@ public class WSGateway implements OnMessageReceived {
         // is this checking needed?
         String sessionId = session.getId();
         sessions.computeIfAbsent(sessionId, k -> session);
-        LOGGER.info("Sent SessionId: {}, Message: {}", sessionId, message);
+//        LOGGER.info("Sent SessionId: {}, Message: {}", sessionId, message);
         ClusterInteractionAgent.getInstance().send(sessionId, message);
     }
 
@@ -51,7 +51,7 @@ public class WSGateway implements OnMessageReceived {
     @Override
     public void received(String sessionId, String message) {
         // is this checking needed?
-        LOGGER.info("Received SessionId: {}, Message: {}", sessionId, message);
+//        LOGGER.info("Received SessionId: {}, Message: {}", sessionId, message);
         if(sessions.containsKey(sessionId))
         {
             WebSocketSession session = sessions.get(sessionId);

@@ -25,7 +25,7 @@ public class ClientEgressListener implements EgressListener {
 
     @Override
     public void onMessage(long clusterSessionId, long timestamp, DirectBuffer buffer, int offset, int length, Header header) {
-        LOGGER.info("Received message from {}", clusterSessionId);
+//        LOGGER.info("Received message from {}", clusterSessionId);
         // NOTE: we don't care about the MessageHeader RN
         headerDecoder.wrap(buffer, offset);
         decoder.wrapAndApplyHeader(buffer, offset, headerDecoder);
